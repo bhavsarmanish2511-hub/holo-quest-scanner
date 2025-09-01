@@ -61,7 +61,12 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				'neon-blue': 'hsl(var(--neon-blue))',
+				'neon-purple': 'hsl(var(--neon-purple))',
+				'cyber-green': 'hsl(var(--cyber-green))',
+				'hologram': 'hsl(var(--hologram))',
+				'hologram-glow': 'hsl(var(--hologram-glow))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
