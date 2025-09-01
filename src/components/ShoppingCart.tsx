@@ -105,16 +105,16 @@ export const ShoppingCart: React.FC = () => {
       </div>
 
       {/* Cart Content */}
-      <div className="max-w-2xl mx-auto p-6 space-y-6">
-        <div className="text-center space-y-2">
+      <div className="max-w-sm mx-auto p-4 space-y-4 min-h-[calc(100vh-200px)]">
+        <div className="text-center space-y-1">
           <div className="flex items-center justify-center">
-            <Sparkles className="h-8 w-8 text-primary mb-2" />
+            <Sparkles className="h-6 w-6 text-primary mb-1" />
           </div>
-          <h2 className="text-2xl font-bold text-primary">Your Shopping Cart</h2>
-          <p className="text-muted-foreground">Sustainable fashion items in your cart</p>
+          <h2 className="text-xl font-bold text-primary">Your Shopping Cart</h2>
+          <p className="text-muted-foreground text-sm">Sustainable fashion items in your cart</p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {items.map((item) => (
             <CartItem
               key={item.id}
