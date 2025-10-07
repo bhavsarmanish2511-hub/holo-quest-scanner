@@ -27,7 +27,7 @@ export function NotificationPanel({ onNotificationClick }: NotificationPanelProp
     const handleNewIncident = (event: CustomEvent) => {
       const { incident } = event.detail;
       const newNotification: Notification = {
-        id: `incident-${incident.id}`,
+        id: `incident-${incident.id}-${Date.now()}`,
         title: 'New Incident Assigned',
         message: `${incident.id}: ${incident.title} has been assigned to you`,
         timestamp: new Date().toLocaleString(),
@@ -36,13 +36,7 @@ export function NotificationPanel({ onNotificationClick }: NotificationPanelProp
         ticketId: incident.id
       };
 
-      setNotifications(prev => {
-        const exists = prev.some(n => n.id === newNotification.id);
-        if (!exists) {
-          return [newNotification, ...prev];
-        }
-        return prev;
-      });
+      setNotifications(prev => [newNotification, ...prev]);
     };
 
     window.addEventListener('new-incident' as any, handleNewIncident);
@@ -79,7 +73,7 @@ export function NotificationPanel({ onNotificationClick }: NotificationPanelProp
     const handleTicketCreated = (event: CustomEvent) => {
       const { ticket, type } = event.detail;
       const creationNotification: Notification = {
-        id: `created-${ticket.id}`,
+        id: `created-${ticket.id}-${Date.now()}`,
         title: `${type === 'incident' ? 'Incident' : 'Service Request'} Created`,
         message: `${ticket.id}: ${ticket.title} has been created`,
         timestamp: new Date().toLocaleString(),
@@ -88,13 +82,7 @@ export function NotificationPanel({ onNotificationClick }: NotificationPanelProp
         ticketId: ticket.id
       };
 
-      setNotifications(prev => {
-        const exists = prev.some(n => n.id === creationNotification.id);
-        if (!exists) {
-          return [creationNotification, ...prev];
-        }
-        return prev;
-      });
+      setNotifications(prev => [creationNotification, ...prev]);
     };
 
     window.addEventListener('ticket-created' as any, handleTicketCreated);
@@ -108,7 +96,7 @@ export function NotificationPanel({ onNotificationClick }: NotificationPanelProp
     const handleTicketResolved = (event: CustomEvent) => {
       const { incidentId, srId, title } = event.detail;
       const resolutionNotification: Notification = {
-        id: `resolution-${incidentId || srId}`,
+        id: `resolution-${incidentId || srId}-${Date.now()}`,
         title: 'Ticket Resolved',
         message: `Your request "${title}" has been resolved and closed.`,
         timestamp: new Date().toLocaleString(),
@@ -117,13 +105,7 @@ export function NotificationPanel({ onNotificationClick }: NotificationPanelProp
         ticketId: srId || incidentId
       };
 
-      setNotifications(prev => {
-        const exists = prev.some(n => n.id === resolutionNotification.id);
-        if (!exists) {
-          return [resolutionNotification, ...prev];
-        }
-        return prev;
-      });
+      setNotifications(prev => [resolutionNotification, ...prev]);
     };
 
     window.addEventListener('ticket-resolved' as any, handleTicketResolved);
