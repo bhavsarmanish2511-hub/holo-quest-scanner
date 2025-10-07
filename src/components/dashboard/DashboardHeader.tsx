@@ -11,8 +11,13 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { NotificationPanel } from "@/components/support/NotificationPanel";
 
-export function DashboardHeader() {
+interface DashboardHeaderProps {
+  onNotificationClick?: (ticketId: string) => void;
+}
+
+export function DashboardHeader({ onNotificationClick }: DashboardHeaderProps) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
@@ -23,6 +28,9 @@ export function DashboardHeader() {
       </div>
 
       <div className="flex items-center gap-4">
+        {onNotificationClick && (
+          <NotificationPanel onNotificationClick={onNotificationClick} />
+        )}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

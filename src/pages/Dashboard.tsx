@@ -8,7 +8,23 @@ import { TicketDetailsModal } from "@/components/tickets/TicketDetailsModal";
 import { IncidentDetailsModal } from "@/components/incidents/IncidentDetailsModal";
 import { useTickets } from "@/contexts/TicketsContext";
 import { useToast } from "@/hooks/use-toast";
-import { NotificationPanel } from "@/components/support/NotificationPanel";
+
+export const handleNotificationClickHelper = (
+  ticketId: string,
+  tickets: any[],
+  incidents: any[],
+  setSelectedTicket: (ticket: any) => void,
+  setSelectedIncident: (incident: any) => void
+) => {
+  const ticket = tickets.find(t => t.id === ticketId);
+  const incident = incidents.find(i => i.id === ticketId);
+  
+  if (ticket) {
+    setSelectedTicket(ticket);
+  } else if (incident) {
+    setSelectedIncident(incident);
+  }
+};
 
 const Dashboard = () => {
   const { tickets, incidents } = useTickets();
@@ -30,6 +46,18 @@ const Dashboard = () => {
       window.removeEventListener('ticket-resolved' as any, handleTicketResolved);
     };
   }, [toast]);
+
+  // Listen for notification clicks from header
+  useEffect(() => {
+    const handleNotificationClicked = (event: CustomEvent) => {
+      handleNotificationClick(event.detail);
+    };
+
+    window.addEventListener('notification-clicked' as any, handleNotificationClicked);
+    return () => {
+      window.removeEventListener('notification-clicked' as any, handleNotificationClicked);
+    };
+  }, [tickets, incidents]);
   
   const openTickets = tickets.filter(t => t.status !== "resolved" && t.status !== "closed" && t.status !== "completed");
   const openIncidentsData = incidents.filter(i => i.status !== "resolved" && i.status !== "closed");
@@ -49,26 +77,16 @@ const Dashboard = () => {
   ];
 
   const handleNotificationClick = (ticketId: string) => {
-    const ticket = tickets.find(t => t.id === ticketId);
-    const incident = incidents.find(i => i.id === ticketId);
-    
-    if (ticket) {
-      setSelectedTicket(ticket);
-    } else if (incident) {
-      setSelectedIncident(incident);
-    }
+    handleNotificationClickHelper(ticketId, tickets, incidents, setSelectedTicket, setSelectedIncident);
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, James</h1>
-          <p className="text-muted-foreground">
-            Your AI assistant is ready to help with reports, tickets, and incidents.
-          </p>
-        </div>
-        <NotificationPanel onNotificationClick={handleNotificationClick} />
+      <div>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, James</h1>
+        <p className="text-muted-foreground">
+          Your AI assistant is ready to help with reports, tickets, and incidents.
+        </p>
       </div>
 
       {/* Quick Actions */}
