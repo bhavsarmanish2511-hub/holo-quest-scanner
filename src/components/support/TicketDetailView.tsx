@@ -84,6 +84,15 @@ export function TicketDetailView({ ticket, open, onClose }: TicketDetailViewProp
       updated: now
     });
 
+    // Dispatch notification event for business user
+    window.dispatchEvent(new CustomEvent('support-action', {
+      detail: {
+        ticketId: localTicket.id,
+        action: 'Resolution Steps Added',
+        message: `Support engineer added resolution steps for ${localTicket.id}`
+      }
+    }));
+
     setIsEditing(false);
     toast({
       title: "Resolution Saved",
@@ -124,6 +133,16 @@ export function TicketDetailView({ ticket, open, onClose }: TicketDetailViewProp
     });
 
     setResolutionSent(true);
+    
+    // Dispatch notification event for business user
+    window.dispatchEvent(new CustomEvent('support-action', {
+      detail: {
+        ticketId: localTicket.id,
+        action: 'Resolution Sent',
+        message: `Password reset instructions sent for ${localTicket.id}`
+      }
+    }));
+
     toast({
       title: "Resolution Sent",
       description: `Password reset instructions sent to ${localTicket.createdBy}`,
@@ -146,6 +165,15 @@ export function TicketDetailView({ ticket, open, onClose }: TicketDetailViewProp
         worklog: finalWorklog,
         status: 'resolved',
         updated: userActionTime
+      }));
+
+      // Dispatch notification for ticket resolution
+      window.dispatchEvent(new CustomEvent('support-action', {
+        detail: {
+          ticketId: localTicket.id,
+          action: 'Ticket Resolved',
+          message: `${localTicket.id}: ${localTicket.title} has been resolved`
+        }
       }));
 
       toast({

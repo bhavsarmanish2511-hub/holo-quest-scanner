@@ -48,13 +48,27 @@ const Dashboard = () => {
     { label: "Request Database Access", prompt: "I need access to the finance database" }
   ];
 
+  const handleNotificationClick = (ticketId: string) => {
+    const ticket = tickets.find(t => t.id === ticketId);
+    const incident = incidents.find(i => i.id === ticketId);
+    
+    if (ticket) {
+      setSelectedTicket(ticket);
+    } else if (incident) {
+      setSelectedIncident(incident);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, James</h1>
-        <p className="text-muted-foreground">
-          Your AI assistant is ready to help with reports, tickets, and incidents.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, James</h1>
+          <p className="text-muted-foreground">
+            Your AI assistant is ready to help with reports, tickets, and incidents.
+          </p>
+        </div>
+        <NotificationPanel onNotificationClick={handleNotificationClick} />
       </div>
 
       {/* Quick Actions */}

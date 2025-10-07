@@ -131,6 +131,7 @@ export default function SupportDashboard() {
             Monitor tickets, incidents, and performance metrics
           </p>
         </div>
+        <NotificationPanel onNotificationClick={handleNotificationClick} />
       </div>
 
       {/* Metrics Grid */}
