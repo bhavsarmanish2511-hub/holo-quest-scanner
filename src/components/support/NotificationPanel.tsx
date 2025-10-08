@@ -40,6 +40,9 @@ export function NotificationPanel({ onNotificationClick }: NotificationPanelProp
     const notifiedIncidents = JSON.parse(localStorage.getItem(notifiedIncidentsKey) || '[]');
     
     incidents.forEach(incident => {
+      // Skip AI-only incidents (like Password Unlock)
+      if (incident.isAIOnly) return;
+      
       if (!notifiedIncidents.includes(incident.id)) {
         const notificationId = `incident-${incident.id}-${Date.now()}`;
         
@@ -77,13 +80,14 @@ export function NotificationPanel({ onNotificationClick }: NotificationPanelProp
 
     const handleNewIncident = (event: CustomEvent) => {
       const { incident } = event.detail;
+      
+      // Skip AI-only incidents (like Password Unlock)
+      if (incident.isAIOnly) return;
+      
       const notificationId = `incident-${incident.id}-${Date.now()}`;
       const notifiedIncidents = JSON.parse(localStorage.getItem(notifiedIncidentsKey) || '[]');
       
       setNotifications(prev => {
-        const exists = prev.some(n => n.ticketId === incident.id && n.type === 'assignment');
-        if (exists) return prev;
-        
         const newNotification: Notification = {
           id: notificationId,
           title: 'New Incident Assigned',

@@ -174,6 +174,16 @@ export function useChatbot() {
       
       addMessage({
         role: "assistant",
+        content: `Incident ${incidentId} created. Checking your account status...`,
+        type: "incident",
+        ticketId: incidentId,
+        data: newIncident
+      });
+
+      await simulateTyping(2000);
+      
+      addMessage({
+        role: "assistant",
         content: "Thanks for waiting, your account has been unlocked, could you please try logging in.",
         type: "text"
       });
