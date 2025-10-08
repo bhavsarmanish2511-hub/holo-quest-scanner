@@ -92,15 +92,15 @@ export function useChatbot() {
         
         addMessage({
           role: "assistant",
-          content: "Thanks for confirming!",
+          content: "Great! I'm closing this incident now. Your account is working properly.",
           type: "text"
         });
         
-        // Close the incident
+        // Close the incident with resolution
         updateTicket(passwordUnlockFlow.incidentId, { 
-          status: "resolved",
+          status: "closed",
           resolvedBy: "AI Assistant",
-          resolution: "Account unlocked successfully. User confirmed access restored."
+          resolution: "Account unlocked successfully. User confirmed access restored and able to login."
         });
         
         setPasswordUnlockFlow({ active: false });
