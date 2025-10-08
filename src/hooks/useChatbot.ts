@@ -342,8 +342,8 @@ export function useChatbot() {
     }
     // --- End Payslip Flow ---
 
-    // Handle financial report and other sensitive requests
-    if (isFinancialReportRequest || isPayrollRequest || isInstallRequest) {
+    // Handle financial report requests (SR only, no incident)
+    if (isFinancialReportRequest) {
       addMessage({
         role: "assistant",
         content: `I'll help you with that. Creating Service Request ${ticketId}...`,
@@ -354,22 +354,63 @@ export function useChatbot() {
 
       const newTicket = {
         id: ticketId,
-        title: isFinancialReportRequest 
-          ? "Financial Report Access Request" 
-          : isPayrollRequest 
+        title: "Financial Report Access Request",
+        description: content,
+        status: "open",
+        priority: "high",
+        assignee: "Support Engineer (martha@intelletica.com)",
+        created: now,
+        updated: now,
+        category: "Finance",
+        chatHistory,
+        relatedIncident: "",
+        comments: [
+          { author: "AI Assistant", content: "Service Request created successfully", timestamp: now }
+        ]
+      };
+      
+      addTicket(newTicket);
+      
+      addMessage({
+        role: "assistant",
+        content: `Service Request ${ticketId} created successfully and assigned to Support Engineer.`,
+        type: "ticket",
+        ticketId: ticketId,
+        data: newTicket
+      });
+
+      // Dispatch event for support engineer notification (for SR only)
+      window.dispatchEvent(new CustomEvent('new-ticket', { 
+        detail: { ticket: newTicket } 
+      }));
+
+      return;
+    }
+
+    // Handle payroll and install requests
+    if (isPayrollRequest || isInstallRequest) {
+      addMessage({
+        role: "assistant",
+        content: `I'll help you with that. Creating Service Request ${ticketId}...`,
+        type: "text"
+      });
+
+      await simulateTyping(1000);
+
+      const newTicket = {
+        id: ticketId,
+        title: isPayrollRequest 
             ? "Payroll Information Request" 
             : "Application Installation Request",
         description: content,
         status: "open",
-        priority: isSensitiveReq ? "high" : "medium",
-        assignee: isFinancialReportRequest || isPayrollRequest 
+        priority: isPayrollRequest ? "high" : "medium",
+        assignee: isPayrollRequest 
           ? "Support Engineer (martha@intelletica.com)" 
           : "IT Support",
         created: now,
         updated: now,
-        category: isFinancialReportRequest 
-          ? "Finance" 
-          : isPayrollRequest 
+        category: isPayrollRequest 
             ? "Payroll" 
             : "Technical",
         chatHistory,
@@ -391,7 +432,7 @@ export function useChatbot() {
 
       await simulateTyping(4000);
 
-      if (isSensitiveReq) {
+      if (isPayrollRequest) {
         addMessage({
           role: "assistant",
           content: "This request contains sensitive information. Creating an incident and routing to Support Engineer...",
@@ -404,7 +445,7 @@ export function useChatbot() {
         
         const newIncident = {
           id: incidentId,
-          title: `Sensitive ${isFinancialReportRequest ? 'Financial Report' : isPayrollRequest ? 'Payroll' : 'Data'} Access - Linked to ${ticketId}`,
+          title: `Sensitive Payroll Access - Linked to ${ticketId}`,
           description: `Incident created for sensitive request: ${content}`,
           status: "pending-approval",
           priority: "critical",
@@ -455,9 +496,7 @@ export function useChatbot() {
             ...(newTicket.comments || []),
             { 
               author: "AI Assistant", 
-              content: isInstallRequest 
-                ? "Application installation instructions have been sent to your email. Installation package is available on the IT portal." 
-                : "Your request has been processed. Please check your email for the information.",
+              content: "Application installation instructions have been sent to your email. Installation package is available on the IT portal.",
               timestamp: new Date().toLocaleString() 
             }
           ]
@@ -467,7 +506,7 @@ export function useChatbot() {
 
         addMessage({
           role: "assistant",
-          content: `✓ Service Request ${ticketId} resolved successfully. ${isInstallRequest ? 'Installation instructions sent to your email.' : 'Information has been sent to your email.'}`,
+          content: `✓ Service Request ${ticketId} resolved successfully. Installation instructions sent to your email.`,
           type: "ticket",
           ticketId: ticketId,
           data: updatedTicket
