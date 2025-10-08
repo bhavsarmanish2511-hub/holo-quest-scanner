@@ -22,7 +22,7 @@ const isSensitiveRequest = (message: string): boolean => {
 };
 
 export function useChatbot() {
-  const { addTicket, addIncident, updateTicket } = useTickets();
+  const { addTicket, addIncident, updateTicket, updateIncident } = useTickets();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
@@ -97,7 +97,7 @@ export function useChatbot() {
         });
         
         // Close the incident with resolution
-        updateTicket(passwordUnlockFlow.incidentId, { 
+        updateIncident(passwordUnlockFlow.incidentId, { 
           status: "closed",
           resolvedBy: "AI Assistant",
           resolution: "Account unlocked successfully. User confirmed access restored and able to login."
