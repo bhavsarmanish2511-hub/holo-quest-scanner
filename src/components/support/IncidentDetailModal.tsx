@@ -277,40 +277,44 @@ export function IncidentDetailModal({ incident, open, onClose }: IncidentDetailM
 
   const handleCloseTicket = () => {
     const now = new Date().toLocaleString();
-    const resolvedTimeline = [
+    const closedTimeline = [
       ...localIncident.timeline,
       {
-        status: "Resolved",
+        status: "Closed",
         timestamp: now,
-        description: "Ticket resolved by Support Engineer"
+        description: "Ticket closed by Support Engineer"
       }
     ];
     
-    // Update context FIRST before updating local state
     updateIncident(localIncident.id, {
-      status: 'resolved',
+      status: 'closed',
       updated: now,
-      timeline: resolvedTimeline
+      timeline: closedTimeline
     });
 
-    // Resolve the linked SR ticket as well
+    // Close the linked SR ticket as well
     if (localIncident.relatedSR) {
       const linkedTicket = getTicketById(localIncident.relatedSR);
       if (linkedTicket) {
         updateTicket(localIncident.relatedSR, {
-          status: 'resolved',
+          status: 'closed',
           updated: now,
           comments: [
             ...(linkedTicket.comments || []),
             {
               author: 'Support Engineer',
-              content: `Ticket resolved. Linked incident ${localIncident.id} has been resolved.`,
+              content: `Ticket closed. Linked incident ${localIncident.id} has been resolved.`,
               timestamp: now
             }
           ]
         });
       }
     }
+
+    toast({
+      title: "Ticket Closed",
+      description: "The incident and linked SR have been closed successfully",
+    });
 
     // Dispatch event for business user notification
     window.dispatchEvent(new CustomEvent('ticket-resolved', { 
@@ -322,12 +326,6 @@ export function IncidentDetailModal({ incident, open, onClose }: IncidentDetailM
       } 
     }));
 
-    toast({
-      title: "Ticket Resolved",
-      description: `${localIncident.id} has been resolved successfully.`,
-    });
-
-    // Close modal immediately - context is already updated
     onClose();
   };
 
@@ -790,10 +788,10 @@ Support Team
               </Button>
             )}
 
-            {localIncident.approvalStatus === 'approved' && localIncident.downloadLink && localIncident.status !== 'closed' && localIncident.status !== 'resolved' && (
+            {localIncident.approvalStatus === 'approved' && localIncident.downloadLink && localIncident.status !== 'closed' && (
               <Button onClick={handleCloseTicket} className="flex items-center gap-2 bg-success text-success-foreground hover:bg-success/90">
                 <CheckCircle className="h-4 w-4" />
-                Resolve & Close Ticket
+                Close Ticket
               </Button>
             )}
             
