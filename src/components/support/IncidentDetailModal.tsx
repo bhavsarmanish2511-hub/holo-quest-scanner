@@ -320,8 +320,8 @@ export function IncidentDetailModal({ incident, open, onClose }: IncidentDetailM
     }
 
     toast({
-      title: "Ticket Closed",
-      description: "The incident and linked SR have been closed successfully",
+      title: "Ticket Resolved",
+      description: "The incident and linked SR have been resolved successfully",
     });
 
     // Dispatch event for business user notification
@@ -334,7 +334,10 @@ export function IncidentDetailModal({ incident, open, onClose }: IncidentDetailM
       } 
     }));
 
-    onClose();
+    // Close modal after a brief delay to ensure context updates propagate
+    setTimeout(() => {
+      onClose();
+    }, 100);
   };
 
   const emailContent = `
