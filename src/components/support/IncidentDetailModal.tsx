@@ -286,6 +286,14 @@ export function IncidentDetailModal({ incident, open, onClose }: IncidentDetailM
       }
     ];
     
+    const updatedIncident = {
+      ...localIncident,
+      status: 'closed',
+      updated: now,
+      timeline: closedTimeline
+    };
+    
+    setLocalIncident(updatedIncident);
     updateIncident(localIncident.id, {
       status: 'closed',
       updated: now,
@@ -788,10 +796,10 @@ Support Team
               </Button>
             )}
 
-            {localIncident.approvalStatus === 'approved' && localIncident.downloadLink && localIncident.status !== 'closed' && (
+            {localIncident.approvalStatus === 'approved' && localIncident.downloadLink && localIncident.status !== 'closed' && localIncident.status !== 'resolved' && (
               <Button onClick={handleCloseTicket} className="flex items-center gap-2 bg-success text-success-foreground hover:bg-success/90">
                 <CheckCircle className="h-4 w-4" />
-                Close Ticket
+                Resolve & Close Ticket
               </Button>
             )}
             
