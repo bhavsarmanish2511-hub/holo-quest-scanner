@@ -286,14 +286,7 @@ export function IncidentDetailModal({ incident, open, onClose }: IncidentDetailM
       }
     ];
     
-    const updatedIncident = {
-      ...localIncident,
-      status: 'resolved',
-      updated: now,
-      timeline: resolvedTimeline
-    };
-    
-    setLocalIncident(updatedIncident);
+    // Update context FIRST before updating local state
     updateIncident(localIncident.id, {
       status: 'resolved',
       updated: now,
@@ -311,18 +304,13 @@ export function IncidentDetailModal({ incident, open, onClose }: IncidentDetailM
             ...(linkedTicket.comments || []),
             {
               author: 'Support Engineer',
-              content: `Ticket closed. Linked incident ${localIncident.id} has been resolved.`,
+              content: `Ticket resolved. Linked incident ${localIncident.id} has been resolved.`,
               timestamp: now
             }
           ]
         });
       }
     }
-
-    toast({
-      title: "Ticket Resolved",
-      description: "The incident and linked SR have been resolved successfully",
-    });
 
     // Dispatch event for business user notification
     window.dispatchEvent(new CustomEvent('ticket-resolved', { 
@@ -334,10 +322,13 @@ export function IncidentDetailModal({ incident, open, onClose }: IncidentDetailM
       } 
     }));
 
-    // Close modal after a brief delay to ensure context updates propagate
-    setTimeout(() => {
-      onClose();
-    }, 100);
+    toast({
+      title: "Ticket Resolved",
+      description: `${localIncident.id} has been resolved successfully.`,
+    });
+
+    // Close modal immediately - context is already updated
+    onClose();
   };
 
   const emailContent = `
