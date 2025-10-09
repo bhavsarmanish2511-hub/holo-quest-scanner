@@ -277,35 +277,35 @@ export function IncidentDetailModal({ incident, open, onClose }: IncidentDetailM
 
   const handleCloseTicket = () => {
     const now = new Date().toLocaleString();
-    const closedTimeline = [
+    const resolvedTimeline = [
       ...localIncident.timeline,
       {
-        status: "Closed",
+        status: "Resolved",
         timestamp: now,
-        description: "Ticket closed by Support Engineer"
+        description: "Ticket resolved by Support Engineer"
       }
     ];
     
     const updatedIncident = {
       ...localIncident,
-      status: 'closed',
+      status: 'resolved',
       updated: now,
-      timeline: closedTimeline
+      timeline: resolvedTimeline
     };
     
     setLocalIncident(updatedIncident);
     updateIncident(localIncident.id, {
-      status: 'closed',
+      status: 'resolved',
       updated: now,
-      timeline: closedTimeline
+      timeline: resolvedTimeline
     });
 
-    // Close the linked SR ticket as well
+    // Resolve the linked SR ticket as well
     if (localIncident.relatedSR) {
       const linkedTicket = getTicketById(localIncident.relatedSR);
       if (linkedTicket) {
         updateTicket(localIncident.relatedSR, {
-          status: 'closed',
+          status: 'resolved',
           updated: now,
           comments: [
             ...(linkedTicket.comments || []),
